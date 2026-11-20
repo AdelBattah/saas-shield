@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Free 10-Point Solo Founder &amp; SaaS Shield Checklist (Interactive)</title>
+  <meta name="description" content="Interactive 10-point production audit covering freelance contracts, unpaid invoices, Stripe webhooks, and AWS bill-shock prevention. 100% free, ungated, runs in your browser." />
+  <style>
+    :root {
+      --bg: #090d16;
+      --card: #111827;
+      --border: #1f2937;
+      --text: #f8fafc;
+      --muted: #94a3b8;
+      --accent: #f59e0b;
+      --accent-hover: #fbbf24;
+      --blue: #38bdf8;
+      --green: #10b981;
+      --red: #ef4444;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+    .container { max-width: 860px; margin: 0 auto; padding: 0 24px 72px; }
+    header {
+      padding: 20px 0;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 40px;
+    }
+    .logo { font-weight: 800; font-size: 1.05rem; color: var(--text); text-decoration: none; }
+    .logo span { color: var(--accent); }
+    .nav-link { color: var(--blue); text-decoration: none; font-size: 0.92rem; font-weight: 600; }
+    h1 { font-size: clamp(1.7rem, 4vw, 2.4rem); line-height: 1.2; margin-bottom: 12px; }
+    .subtitle { color: var(--muted); font-size: 1.04rem; margin-bottom: 24px; }
+    .score-bar {
+      position: sticky;
+      top: 12px;
+      z-index: 20;
+      background: rgba(17, 24, 39, 0.96);
+      backdrop-filter: blur(8px);
+      border: 1px solid #334155;
+      border-radius: 12px;
+      padding: 16px 20px;
+      margin-bottom: 28px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .progress-track {
+      flex: 1;
+      min-width: 180px;
+      height: 10px;
+      background: #1e293b;
+      border-radius: 999px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background: var(--green);
+      transition: width 0.2s ease, background 0.2s ease;
+    }
+    .section-h {
+      font-size: 1.2rem;
+      color: var(--blue);
+      margin: 30px 0 12px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid var(--border);
+    }
+    .check-item {
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px 18px;
+      margin-bottom: 12px;
+      cursor: pointer;
+      transition: border-color 0.15s;
+    }
+    .check-item:hover { border-color: #334155; }
+    .check-item.checked { border-color: rgba(16, 185, 129, 0.55); background: rgba(16, 185, 129, 0.05); }
+    .check-item input {
+      margin-top: 4px;
+      width: 18px;
+      height: 18px;
+      accent-color: var(--green);
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .check-title { font-weight: 700; margin-bottom: 4px; }
+    .check-desc { color: var(--muted); font-size: 0.92rem; }
+    .check-desc code { background: #0f172a; color: #e2e8f0; padding: 1px 5px; border-radius: 4px; font-size: 0.86rem; }
+    .optin-box {
+      margin-top: 36px;
+      background: linear-gradient(180deg, #111827 0%, #0f172a 100%);
+      border: 1px solid #334155;
+      border-radius: 16px;
+      padding: 28px;
+    }
+    .optin-box h2 { font-size: 1.35rem; margin-bottom: 8px; }
+    .optin-box p { color: var(--muted); font-size: 0.95rem; margin-bottom: 18px; }
+    .form-row { display: flex; gap: 10px; flex-wrap: wrap; }
+    .form-row input[type="email"] {
+      flex: 1;
+      min-width: 220px;
+      padding: 12px 14px;
+      border-radius: 8px;
+      border: 1px solid #334155;
+      background: #090d16;
+      color: var(--text);
+      font-size: 0.95rem;
+    }
+    .btn-primary {
+      background: var(--accent);
+      color: #090d16;
+      padding: 12px 22px;
+      border-radius: 8px;
+      font-weight: 800;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      font-size: 0.95rem;
+      display: inline-block;
+    }
+    .btn-primary:hover { background: var(--accent-hover); }
+    .btn-secondary {
+      background: #1e293b;
+      color: var(--text);
+      padding: 10px 18px;
+      border-radius: 8px;
+      font-weight: 600;
+      text-decoration: none;
+      font-size: 0.9rem;
+      display: inline-block;
+    }
+    .upsell-card {
+      margin-top: 28px;
+      background: var(--card);
+      border: 1px solid var(--accent);
+      border-radius: 16px;
+      padding: 26px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+    footer {
+      margin-top: 48px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+    footer a { color: var(--blue); text-decoration: none; margin: 0 8px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <a class="logo" href="index.html">SAAS<span>SHIELD</span></a>
+      <a class="nav-link" href="index.html#pricing">Get All 4 AI Auditor Skills ($39) →</a>
+    </header>
+
+    <h1>The 10-Point Solo Founder &amp; SaaS Shield Checklist</h1>
+    <p class="subtitle">
+      100% free &amp; ungated. Run these 10 production checks before signing a client contract, launching Stripe billing, or deploying to AWS. Your ticks stay locally in your browser.
+    </p>
+
+    <div class="score-bar">
+      <div>
+        <strong id="score-label">0 / 10 Hardened</strong>
+        <span id="risk-badge" style="margin-left:10px;font-size:0.85rem;color:#ef4444;font-weight:700;">High Exposure</span>
+      </div>
+      <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+    </div>
+
+    <h2 class="section-h">Part 1 — Client Contracts &amp; Cash Flow (Checks 1–4)</h2>
+
+    <label class="check-item">
+      <input type="checkbox" data-id="c1" />
+      <div>
+        <div class="check-title">1. Pre-Existing IP Carve-Out</div>
+        <div class="check-desc">Your MSA/SOW explicitly states that your starter kits, boilerplates, and reusable libraries remain <em>your</em> property—never swept into "Work Made for Hire."</div>
+      </div>
+    </label>
+
+    <label class="check-item">
+      <input type="checkbox" data-id="c2" />
+      <div>
+        <div class="check-title">2. Payment-Triggered IP Transfer</div>
+        <div class="check-desc">Ownership of custom deliverables transfers <em>only upon receipt of full, cleared payment</em>—never upon delivery. This single clause is your strongest lever if a client ghosts you.</div>
+      </div>
+    </label>
+
+    <label class="check-item">
+      <input type="checkbox" data-id="c3" />
+      <div>
+        <div class="check-title">3. Liability Cap &amp; Deemed Acceptance Window</div>
+        <div class="check-desc">Aggregate liability is capped at fees actually paid under the SOW (zero uncapped consequential damages), and deliverables are deemed accepted after 5–10 business days of client silence.</div>
+      </div>
+    </label>
+
+    <label class="check-item">
+      <input type="checkbox" data-id="c4" />
+      <div>
+        <div class="check-title">4. Pre-Written Overdue Escalation Ladder (Day 1 → Day 45+)</div>
+        <div class="check-desc">You have calibrated commercial escalation emails, statutory late-interest math (US/UK/EU), and an IP License Revocation Notice ready before an invoice hits Day 30.</div>
+      </div>
+    </label>
+
+    <h2 class="section-h">Part 2 — Stripe &amp; Payment Webhooks (Checks 5–7)</h2>
+
+    <label class="check-item">
+      <input type="checkbox" data-id="c5" />
+      <div>
+        <div class="check-title">5. Raw Byte Body Before Signature Verification</div>
+        <div class="check-desc">Your webhook route passes the exact raw byte buffer to <code>stripe.webhooks.constructEvent()</code> <em>before</em> any JSON body parser runs (parsing JSON first breaks HMAC signatures in production).</div>
+      </div>
+    </label>
+
+    <label class="check-item">
+      <input type="checkbox" data-id="c6" />
+      <div>
+        <div class="check-title">6. Atomic Database Idempotency Gate</div>
+        <div class="check-desc">Every processed <code>event.id</code> is stored in a <code>UNIQUE</code>-constrained database table inside an ACID transaction so Stripe's at-least-once retries never grant double credits or duplicate orders.</div>
+      </div>
+    </label>
+
+    <label class="check-item">
+      <input type="checkbox" data-id="c7" />
+      <div>
+        <div class="check-title">7. Sub-2-Second HTTP 200 Acknowledgment</div>
+        <div class="check-desc">Emails, PDFs, and slow external API calls are offloaded to an async queue so your webhook replies <code>200 OK</code> in &lt;2s—preventing Stripe retry storms and automatic endpoint deactivation.</div>
+      </div>
+    </label>
+
+    <h2 class="section-h">Part 3 — AWS Cloud Security &amp; Bill-Shock Shield (Checks 8–10)</h2>
+
+    <label class="check-item">
+      <input type="checkbox" data-id="c8" />
+      <div>
+        <div class="check-title">8. Free VPC Gateway Endpoints for S3 &amp; DynamoDB</div>
+        <div class="check-desc">Private subnets route S3 and DynamoDB traffic through a <strong>$0 VPC Gateway Endpoint</strong> instead of burning ~$0.045/GB through a NAT Gateway.</div>
+      </div>
+    </label>
+
+    <label class="check-item">
+      <input type="checkbox" data-id="c9" />
+      <div>
+        <div class="check-title">9. IAM Region Lock &amp; High-Cost GPU Block</div>
+        <div class="check-desc">An IAM Permissions Boundary or SCP denies deployments outside your approved regions (<code>aws:RequestedRegion</code>) and blocks <code>p*</code>/<code>g*</code>/<code>*.metal</code> instances so a leaked key cannot mine crypto across 15 unused regions.</div>
+      </div>
+    </label>
+
+    <label class="check-item">
+      <input type="checkbox" data-id="c10" />
+      <div>
+        <div class="check-title">10. AWS Budgets + Cost Anomaly Detection + Lambda Concurrency Cap</div>
+        <div class="check-desc">You have <code>ACTUAL</code> (50%) and <code>FORECASTED</code> (80%) AWS Budget alerts, immediate Cost Anomaly alerts, and <code>reserved_concurrent_executions</code> set on every S3/SQS-triggered Lambda.</div>
+      </div>
+    </label>
+
+    <div class="optin-box" id="email-optin">
+      <h2>Want the Copy-Paste Markdown + Free Open-Core "Lite" Skill Releases?</h2>
+      <p>
+        Get the downloadable Markdown version of this checklist plus our upcoming free MIT-licensed <code>SKILL.md</code> starter rules for Claude Code &amp; Cursor. Zero spam, 1-click unsubscribe.
+      </p>
+      <!-- REPLACE BUTTONDOWN_USERNAME ONCE YOUR FREE BUTTONDOWN ACCOUNT IS CREATED -->
+      <form id="buttondown-form" action="https://buttondown.com/api/emails/embed-subscribe/BUTTONDOWN_USERNAME" method="post" target="popupwindow" class="form-row">
+        <input type="email" name="email" id="bd-email" placeholder="you@yourdomain.com" required />
+        <button type="submit" class="btn-primary">Send Me the Markdown + Lite Skills</button>
+      </form>
+      <p style="margin-top:12px;font-size:0.86rem;color:#64748b;">
+        Prefer direct download without email? <a href="10-Point_SaaS_Revenue_and_Cloud_Shield_Checklist.md" download style="color:#38bdf8;">Download raw .md file here</a>.
+      </p>
+    </div>
+
+    <div class="upsell-card">
+      <div style="max-width:520px;">
+        <div style="font-size:0.78rem;font-weight:700;text-transform:uppercase;color:var(--accent);margin-bottom:4px;">Automate All 10 Audits in 60 Seconds</div>
+        <h3 style="font-size:1.25rem;margin-bottom:6px;">Turn Claude Code, Cursor, or ChatGPT Into All 4 Auditors</h3>
+        <p style="color:var(--muted);font-size:0.92rem;">
+          Includes <strong>Contract Risk Redline</strong>, <strong>Invoice Recovery Pro</strong>, <strong>Stripe Webhook Sentinel</strong>, and <strong>AWS Bill Shock Shield</strong> ($79.96 retail on Agensi.io — get all 4 for <strong>$39 one-time</strong>, backed by a 14-day guarantee).
+        </p>
+      </div>
+      <a class="btn-primary" href="index.html#pricing">See the 4-Skill Bundle ($39)</a>
+    </div>
+
+    <footer>
+      <a href="index.html">Home</a>
+      <a href="terms.html">Terms</a>
+      <a href="privacy.html">Privacy</a>
+      <a href="refund.html">14-Day Refund Policy</a>
+    </footer>
+  </div>
+
+  <script>
+    const boxes = Array.from(document.querySelectorAll('.check-item input[type="checkbox"]'));
+    const scoreLabel = document.getElementById("score-label");
+    const riskBadge = document.getElementById("risk-badge");
+    const progressFill = document.getElementById("progress-fill");
+    const STORAGE_KEY = "saas_shield_checklist_v1";
+
+    function loadState() {
+      try {
+        const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
+        boxes.forEach((cb) => {
+          cb.checked = Boolean(saved[cb.dataset.id]);
+          cb.closest(".check-item").classList.toggle("checked", cb.checked);
+        });
+      } catch {}
+    }
+
+    function updateScore() {
+      const done = boxes.filter((b) => b.checked).length;
+      const pct = Math.round((done / boxes.length) * 100);
+      scoreLabel.textContent = done + " / " + boxes.length + " Hardened";
+      progressFill.style.width = pct + "%";
+      if (done === 10) {
+        riskBadge.textContent = "Production Hardened";
+        riskBadge.style.color = "#10b981";
+        progressFill.style.background = "#10b981";
+      } else if (done >= 6) {
+        riskBadge.textContent = "Moderate Exposure";
+        riskBadge.style.color = "#f59e0b";
+        progressFill.style.background = "#f59e0b";
+      } else {
+        riskBadge.textContent = "High Exposure";
+        riskBadge.style.color = "#ef4444";
+        progressFill.style.background = "#ef4444";
+      }
+      const state = {};
+      boxes.forEach((b) => { state[b.dataset.id] = b.checked; });
+      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch {}
+    }
+
+    boxes.forEach((cb) => {
+      cb.addEventListener("change", () => {
+        cb.closest(".check-item").classList.toggle("checked", cb.checked);
+        updateScore();
+      });
+    });
+
+    // Guard Buttondown form gracefully until username is configured
+    const bdForm = document.getElementById("buttondown-form");
+    if (bdForm && bdForm.action.includes("BUTTONDOWN_USERNAME")) {
+      bdForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        window.location.href = "10-Point_SaaS_Revenue_and_Cloud_Shield_Checklist.md";
+      });
+    }
+
+    loadState();
+    updateScore();
+  </script>
+</body>
+</html>
