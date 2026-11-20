@@ -286,27 +286,63 @@
     </footer>
   </div>
 
+  <div id="checkout-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:50;align-items:center;justify-content:center;padding:20px;">
+    <div style="background:#111827;border:1px solid #10b981;border-radius:16px;max-width:480px;width:100%;padding:28px;text-align:center;">
+      <div style="color:#10b981;font-weight:800;font-size:0.85rem;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px;">Payment Confirmed</div>
+      <h3 style="margin-bottom:10px;">Thank You for Your Purchase!</h3>
+      <p id="order-summary" style="color:#cbd5e1;font-size:0.95rem;margin-bottom:18px;"></p>
+      <div id="download-actions" style="display:flex;flex-direction:column;gap:10px;"></div>
+      <button onclick="document.getElementById('checkout-modal').style.display='none'" style="background:none;border:none;color:#94a3b8;margin-top:14px;cursor:pointer;">Close</button>
+    </div>
+  </div>
+
   <script>
-    // === PADDLE CONFIGURATION (Activate once Paddle approves this URL) ===
-    // Replace empty strings with your live Paddle client token and Price IDs.
-    // Until populated, clicking Buy routes visitors straight to your live Agensi.io store so zero traffic is lost!
+    // === LIVE PADDLE BILLING v2 CONFIGURATION ===
     const PADDLE_CONFIG = {
-      clientToken: "",          // e.g. "live_xxxxxxxxxxxxxxxxxxxx"
-      priceIdCore29: "",        // e.g. "pri_xxxxxxxxxxxxxxxxxxxx"
-      priceIdPro39: "",         // e.g. "pri_xxxxxxxxxxxxxxxxxxxx"
-      fallbackUrl: "https://www.agensi.io/creators/adel-battah"
+      clientToken: "live_4a9e3f842c13a62f1637de99e52",
+      priceIdCore29: "pri_01m7vfaxqfg5qf7bb0jjxk0y4q",
+      priceIdPro39: "pri_01m7vfd7qrjch9zng4v66rs1qk",
+      downloadCoreUrl: "",
+      downloadProUrl: ""
     };
 
-    if (PADDLE_CONFIG.clientToken && window.Paddle) {
-      Paddle.Initialize({ token: PADDLE_CONFIG.clientToken });
+    let lastTier = "pro";
+
+    if (window.Paddle) {
+      Paddle.Initialize({
+        token: PADDLE_CONFIG.clientToken,
+        eventCallback: function (event) {
+          if (event && event.name === "checkout.completed") {
+            const txnId = (event.data && event.data.transaction_id) ? event.data.transaction_id : "confirmed";
+            const email = (event.data && event.data.customer && event.data.customer.email) ? event.data.customer.email : "";
+            const dlUrl = lastTier === "core" ? PADDLE_CONFIG.downloadCoreUrl : PADDLE_CONFIG.downloadProUrl;
+            const tierLabel = lastTier === "core" ? "Freelance Revenue Shield (Core 3-Skill Bundle)" : "Complete Solo Founder & SaaS Shield (4-Skill Bundle)";
+
+            document.getElementById("order-summary").innerHTML =
+              "Order <strong>" + txnId + "</strong> for <strong>" + tierLabel + "</strong> is complete." +
+              (email ? "<br/>Receipt sent to <strong>" + email + "</strong>." : "");
+
+            const actions = document.getElementById("download-actions");
+            if (dlUrl) {
+              actions.innerHTML =
+                '<a class="btn-primary" href="' + dlUrl + '" target="_blank" rel="noopener">Download Your Bundle (.ZIP) Now</a>' +
+                '<a class="btn-secondary" href="mailto:adelbattah16@gmail.com?subject=Order%20' + encodeURIComponent(txnId) + '%20Support">Need Help? Contact Support</a>';
+            } else {
+              actions.innerHTML =
+                '<p style="color:#94a3b8;font-size:0.9rem;margin-bottom:6px;">Your download package is being dispatched to your receipt email. Click below for priority instant delivery:</p>' +
+                '<a class="btn-primary" href="mailto:adelbattah16@gmail.com?subject=Instant%20Download%20Request%20-%20' + encodeURIComponent(txnId) + '&body=Hi%20Adel%2C%20I%20just%20completed%20order%20' + encodeURIComponent(txnId) + '%20(' + encodeURIComponent(tierLabel) + ').">Claim Priority Download</a>';
+            }
+            document.getElementById("checkout-modal").style.display = "flex";
+          }
+        }
+      });
     }
 
     function openCheckout(tier) {
+      lastTier = tier;
       const priceId = tier === "core" ? PADDLE_CONFIG.priceIdCore29 : PADDLE_CONFIG.priceIdPro39;
-      if (PADDLE_CONFIG.clientToken && priceId && window.Paddle) {
+      if (window.Paddle && priceId) {
         Paddle.Checkout.open({ items: [{ priceId: priceId, quantity: 1 }] });
-      } else {
-        window.open(PADDLE_CONFIG.fallbackUrl, "_blank", "noopener");
       }
     }
   </script>
