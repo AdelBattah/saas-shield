@@ -311,11 +311,16 @@
       const summaryEl = document.getElementById("order-summary");
       const actionsEl = document.getElementById("download-actions");
 
-      summaryEl.innerHTML =
-        "Order <strong>" + txnId + "</strong> for <strong>" + tierLabel + "</strong> received." +
-        (email ? "<br/>Receipt email: <strong>" + email + "</strong>" : "");
-      actionsEl.innerHTML =
-        '<p style="color:#94a3b8;font-size:0.92rem;">Verifying payment &amp; generating your secure download link...</p>';
+      // Zero innerHTML (OWASP DOM XSS prevention)
+      summaryEl.textContent =
+        "Order " + txnId + " for " + tierLabel + " received." +
+        (email ? " Receipt: " + email : "");
+
+      actionsEl.replaceChildren();
+      const statusP = document.createElement("p");
+      statusP.style.cssText = "color:#94a3b8;font-size:0.92rem;";
+      statusP.textContent = "Verifying payment & generating your secure download link...";
+      actionsEl.appendChild(statusP);
       document.getElementById("checkout-modal").style.display = "flex";
 
       try {
@@ -330,24 +335,46 @@
           return;
         }
 
-        if (resp.ok && data.verified && data.downloadUrl) {
-          actionsEl.innerHTML =
-            '<a class="btn-primary" href="' + data.downloadUrl + '">Download ' + (data.filename || "Your Bundle (.ZIP)") + ' Now</a>' +
-            '<p style="color:#94a3b8;font-size:0.85rem;margin-top:4px;">' +
-            (data.emailSent
-              ? "A backup download link has also been emailed to your receipt address (valid 72h)."
-              : "Save your download now (link valid 72h). Need help? Reply to your Paddle receipt.") +
-            '</p>';
+        const expectedPrefix = "https://saas-shield-delivery.vercel.app/api/download?token=";
+        if (resp.ok && data.verified && typeof data.downloadUrl === "string" && data.downloadUrl.startsWith(expectedPrefix)) {
+          actionsEl.replaceChildren();
+          const dlLink = document.createElement("a");
+          dlLink.className = "btn-primary";
+          dlLink.href = data.downloadUrl;
+          dlLink.textContent = "Download " + (data.filename || "Your Bundle (.ZIP)") + " Now";
+
+          const noteP = document.createElement("p");
+          noteP.style.cssText = "color:#94a3b8;font-size:0.85rem;margin-top:4px;";
+          noteP.textContent = data.emailSent
+            ? "A backup download link has also been emailed to your receipt address (valid 72h)."
+            : "Save your download now (link valid 72h). Need help? Reply to your Paddle receipt.";
+
+          actionsEl.appendChild(dlLink);
+          actionsEl.appendChild(noteP);
           return;
         }
       } catch (e) {
         // Fallback below if network hiccups
       }
 
-      actionsEl.innerHTML =
-        '<p style="color:#94a3b8;font-size:0.9rem;margin-bottom:6px;">Payment verified by Paddle. Click below to retry instant download or claim via email:</p>' +
-        '<button class="btn-primary" onclick="verifyAndUnlockDownload(\'' + txnId + '\', \'' + (email || "") + '\', \'' + tierLabel.replace(/'/g, "") + '\', 1)">Retry Instant Download</button>' +
-        '<a class="btn-secondary" href="mailto:adelbattah16@gmail.com?subject=Instant%20Download%20-%20' + encodeURIComponent(txnId) + '">Contact Support</a>';
+      actionsEl.replaceChildren();
+      const fbP = document.createElement("p");
+      fbP.style.cssText = "color:#94a3b8;font-size:0.9rem;margin-bottom:6px;";
+      fbP.textContent = "Payment received by Paddle. Click below to retry instant download or contact support:";
+
+      const retryBtn = document.createElement("button");
+      retryBtn.className = "btn-primary";
+      retryBtn.textContent = "Retry Instant Download";
+      retryBtn.addEventListener("click", () => verifyAndUnlockDownload(txnId, email, tierLabel, 1));
+
+      const mailLink = document.createElement("a");
+      mailLink.className = "btn-secondary";
+      mailLink.href = "mailto:adelbattah16@gmail.com?subject=" + encodeURIComponent("Instant Download - " + txnId);
+      mailLink.textContent = "Contact Support";
+
+      actionsEl.appendChild(fbP);
+      actionsEl.appendChild(retryBtn);
+      actionsEl.appendChild(mailLink);
     }
 
     if (window.Paddle) {
