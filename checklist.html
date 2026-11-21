@@ -177,6 +177,10 @@
       <a class="nav-link" href="index.html#pricing">Get All 4 AI Auditor Skills ($39) →</a>
     </header>
 
+    <div id="confirmed-banner" style="display:none;background:rgba(16,185,129,0.12);border:1px solid #10b981;border-radius:12px;padding:16px 20px;margin-bottom:24px;color:#ecfdf5;">
+      <strong>You're confirmed!</strong> Welcome to Solo Founder &amp; SaaS Shield. Tick your checks below and click <strong>Download Your Personalized Audit (.md)</strong> anytime—you'll also get our free MIT Open-Core Lite skills first when they drop.
+    </div>
+
     <h1>The 10-Point Solo Founder &amp; SaaS Shield Checklist</h1>
     <p class="subtitle">
       100% free &amp; ungated. Run these 10 production checks before signing a client contract, launching Stripe billing, or deploying to AWS. Your ticks stay locally in your browser.
@@ -277,17 +281,20 @@
     </label>
 
     <div class="optin-box" id="email-optin">
-      <h2>Want the Copy-Paste Markdown + Free Open-Core "Lite" Skill Releases?</h2>
+      <h2>Get Your Personalized Audit (.md) + Free Open-Core "Lite" Skill Releases</h2>
       <p>
-        Get the downloadable Markdown version of this checklist plus our upcoming free MIT-licensed <code>SKILL.md</code> starter rules for Claude Code &amp; Cursor. Zero spam, 1-click unsubscribe.
+        Subscribe for our upcoming free MIT-licensed <code>SKILL.md</code> starter rules for Claude Code &amp; Cursor, or export your current ticked audit below right now. Zero spam, 1-click unsubscribe.
       </p>
-      <form id="buttondown-form" action="https://buttondown.com/api/emails/embed-subscribe/adelb" method="post" target="popupwindow" class="form-row">
+      <form id="buttondown-form" action="https://buttondown.com/api/emails/embed-subscribe/adelb" method="post" target="_blank" class="form-row">
+        <input type="hidden" name="embed" value="1" />
         <input type="email" name="email" id="bd-email" placeholder="you@yourdomain.com" required />
-        <button type="submit" class="btn-primary">Send Me the Markdown + Lite Skills</button>
+        <button type="submit" class="btn-primary">Join Free &amp; Get Lite Skills</button>
       </form>
-      <p style="margin-top:12px;font-size:0.86rem;color:#64748b;">
-        Prefer direct download without email? <a href="10-Point_SaaS_Revenue_and_Cloud_Shield_Checklist.md" download style="color:#38bdf8;">Download raw .md file here</a>.
-      </p>
+      <p id="bd-feedback" style="display:none;margin-top:10px;font-size:0.9rem;color:#10b981;font-weight:600;"></p>
+      <div style="margin-top:16px;display:flex;gap:12px;flex-wrap:wrap;align-items:center;">
+        <button type="button" id="download-custom-md" class="btn-secondary" style="border:1px solid #334155;cursor:pointer;">Download Your Personalized Audit (.md)</button>
+        <a href="10-Point_SaaS_Revenue_and_Cloud_Shield_Checklist.md" download style="color:#94a3b8;font-size:0.86rem;">or download blank template (.md)</a>
+      </div>
     </div>
 
     <div class="upsell-card">
@@ -356,14 +363,70 @@
       });
     });
 
-    // Guard Buttondown form gracefully until username is configured
+    // Show welcome banner when redirected from Buttondown confirmation (?confirmed=1)
+    if (new URLSearchParams(window.location.search).get("confirmed") === "1") {
+      document.getElementById("confirmed-banner").style.display = "block";
+    }
+
+    // Immediate on-page feedback when submitting Buttondown form
     const bdForm = document.getElementById("buttondown-form");
-    if (bdForm && bdForm.action.includes("BUTTONDOWN_USERNAME")) {
-      bdForm.addEventListener("submit", (e) => {
-        e.preventDefault();
-        window.location.href = "10-Point_SaaS_Revenue_and_Cloud_Shield_Checklist.md";
+    const bdFeedback = document.getElementById("bd-feedback");
+    if (bdForm) {
+      bdForm.addEventListener("submit", () => {
+        bdFeedback.textContent = "Opened Buttondown confirmation tab — check your inbox (and spam/promotions) to confirm! Already subscribed? You can export your personalized Markdown audit right below.";
+        bdFeedback.style.display = "block";
       });
     }
+
+    // Dynamic personalized Markdown export reflecting exact ticked/unticked state
+    document.getElementById("download-custom-md").addEventListener("click", () => {
+      const done = boxes.filter((b) => b.checked).length;
+      const status = done === 10 ? "Production Hardened" : done >= 6 ? "Moderate Exposure" : "High Exposure";
+      const lines = [
+        "# Solo Founder & SaaS Shield — Personalized Audit Report",
+        "",
+        "- **Score:** " + done + " / " + boxes.length + " (" + status + ")",
+        "- **Generated:** " + new Date().toISOString().slice(0, 10),
+        "",
+        "---",
+        "",
+        "## Audit Results",
+        ""
+      ];
+      const gaps = [];
+      boxes.forEach((cb) => {
+        const card = cb.closest(".check-item");
+        const title = card.querySelector(".check-title").textContent.trim();
+        const desc = card.querySelector(".check-desc").textContent.trim();
+        lines.push("- [" + (cb.checked ? "x" : " ") + "] **" + title + "** — " + desc);
+        if (!cb.checked) gaps.push(title);
+      });
+      lines.push("", "---", "");
+      if (gaps.length > 0) {
+        lines.push("## Priority Unhardened Gaps (" + gaps.length + " Remaining)", "");
+        gaps.forEach((g) => lines.push("- " + g));
+      } else {
+        lines.push("## All 10 Checks Hardened!", "");
+      }
+      lines.push(
+        "",
+        "---",
+        "",
+        "## Automate All 10 Audits in Claude Code, Cursor & ChatGPT",
+        "- **Complete 4-Skill Bundle ($39 one-time, Save $40.96):** https://adelbattah.github.io/#pricing",
+        "- **Interactive Checklist:** https://adelbattah.github.io/checklist.html",
+        ""
+      );
+      const blob = new Blob([lines.join("\n")], { type: "text/markdown;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "saas-shield-audit-" + done + "-of-10.md";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    });
 
     loadState();
     updateScore();

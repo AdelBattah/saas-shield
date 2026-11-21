@@ -469,10 +469,12 @@
       </div>
       <div style="display:flex;flex-direction:column;gap:10px;">
         <a class="btn-secondary" style="text-align:center;" href="checklist.html">Open Interactive 10-Point Checklist ($0) →</a>
-        <form id="home-buttondown-form" action="https://buttondown.com/api/emails/embed-subscribe/adelb" method="post" target="popupwindow" class="lead-form">
+        <form id="home-buttondown-form" action="https://buttondown.com/api/emails/embed-subscribe/adelb" method="post" target="_blank" class="lead-form">
+          <input type="hidden" name="embed" value="1" />
           <input type="email" name="email" placeholder="you@yourdomain.com" required />
-          <button type="submit" class="btn-primary" style="padding:12px 18px;font-size:0.9rem;">Get Free .md + Lite Skills</button>
+          <button type="submit" class="btn-primary" style="padding:12px 18px;font-size:0.9rem;">Join Free &amp; Get Lite Skills</button>
         </form>
+        <p id="home-bd-feedback" style="display:none;font-size:0.85rem;color:#10b981;font-weight:600;"></p>
       </div>
     </section>
 
@@ -616,12 +618,13 @@
       } catch {}
     }
 
-    // === GUARD BUTTONDOWN FORM GRACEFULLY UNTIL USERNAME IS SET ===
+    // === IMMEDIATE FEEDBACK ON BUTTONDOWN FORM ===
     const homeBd = document.getElementById("home-buttondown-form");
-    if (homeBd && homeBd.action.includes("BUTTONDOWN_USERNAME")) {
-      homeBd.addEventListener("submit", (e) => {
-        e.preventDefault();
-        window.location.href = "checklist.html";
+    const homeBdFb = document.getElementById("home-bd-feedback");
+    if (homeBd && homeBdFb) {
+      homeBd.addEventListener("submit", () => {
+        homeBdFb.textContent = "Opened confirmation tab — check your inbox to confirm!";
+        homeBdFb.style.display = "block";
       });
     }
 
