@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>You're In — Download Your Free 4-Skill Lite Pack | Solo Founder &amp; SaaS Shield</title>
+  <meta name="robots" content="noindex" />
+  <!-- Cloudflare Web Analytics -->
+  <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "0224e1938ef649419c5303c86aa2298d"}'></script>
+  <style>
+    :root {
+      --bg: #090d16;
+      --card: #111827;
+      --border: #1f2937;
+      --text: #f8fafc;
+      --muted: #94a3b8;
+      --accent: #f59e0b;
+      --accent-hover: #fbbf24;
+      --blue: #38bdf8;
+      --green: #10b981;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+    .container { max-width: 780px; margin: 0 auto; padding: 32px 24px 72px; }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 36px;
+    }
+    .logo { font-weight: 800; color: var(--text); text-decoration: none; }
+    .logo span { color: var(--accent); }
+    .badge {
+      display: inline-block;
+      background: rgba(16, 185, 129, 0.14);
+      border: 1px solid rgba(16, 185, 129, 0.45);
+      color: #34d399;
+      padding: 6px 14px;
+      border-radius: 999px;
+      font-size: 0.84rem;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+    h1 { font-size: clamp(1.75rem, 4vw, 2.35rem); line-height: 1.2; margin-bottom: 12px; }
+    .sub { color: var(--muted); font-size: 1.04rem; margin-bottom: 28px; }
+    .reward-card {
+      background: var(--card);
+      border: 1px solid #334155;
+      border-radius: 16px;
+      padding: 28px;
+      margin-bottom: 24px;
+    }
+    .reward-card h2 { font-size: 1.2rem; margin-bottom: 10px; }
+    .reward-card p { color: var(--muted); font-size: 0.94rem; margin-bottom: 16px; }
+    .btn-row { display: flex; gap: 12px; flex-wrap: wrap; }
+    .btn-primary {
+      background: var(--accent);
+      color: #090d16;
+      padding: 13px 22px;
+      border-radius: 10px;
+      font-weight: 800;
+      text-decoration: none;
+      font-size: 0.96rem;
+      display: inline-block;
+      border: none;
+      cursor: pointer;
+    }
+    .btn-primary:hover { background: var(--accent-hover); }
+    .btn-secondary {
+      background: #1e293b;
+      color: var(--text);
+      padding: 13px 20px;
+      border-radius: 10px;
+      font-weight: 600;
+      text-decoration: none;
+      font-size: 0.95rem;
+      display: inline-block;
+      border: 1px solid #334155;
+    }
+    .cmd-box {
+      background: #050810;
+      border: 1px solid #1e293b;
+      border-radius: 10px;
+      padding: 14px 16px;
+      font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+      font-size: 0.88rem;
+      color: #34d399;
+      margin: 12px 0 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .copy-btn {
+      background: #1e293b;
+      color: var(--text);
+      border: 1px solid #334155;
+      border-radius: 6px;
+      padding: 6px 12px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    ul.included { list-style: none; margin: 14px 0 20px; }
+    ul.included li { padding: 5px 0; color: #cbd5e1; font-size: 0.93rem; }
+    ul.included li::before { content: "✓ "; color: var(--green); font-weight: 800; }
+    .pro-card {
+      background: linear-gradient(180deg, #111827 0%, #0f172a 100%);
+      border: 1px solid var(--accent);
+      border-radius: 16px;
+      padding: 26px 28px;
+    }
+    .pro-card h3 { font-size: 1.2rem; margin-bottom: 8px; }
+    .pro-card p { color: var(--muted); font-size: 0.94rem; margin-bottom: 18px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <a class="logo" href="index.html">SAAS<span>SHIELD</span></a>
+      <a style="color:#38bdf8;text-decoration:none;font-weight:600;font-size:0.9rem;" href="checklist.html">Back to 10-Point Audit</a>
+    </header>
+
+    <div class="badge">✓ Subscription Confirmed</div>
+    <h1>Your Free 4-Skill "Lite" Pack Is Ready</h1>
+    <p class="sub">
+      Here are your 4 MIT-licensed starter <code>SKILL.md</code> auditor skills plus your clean 10-Point Checklist—ready to install in Claude Code, Cursor, Antigravity, or ChatGPT in 30 seconds.
+    </p>
+
+    <div class="reward-card">
+      <h2>Step 1 — Grab Your Free MIT Lite Skills (Choose Either Option)</h2>
+      <p><strong>Option A (1-Command CLI Install):</strong></p>
+      <div class="cmd-box">
+        <span id="cli-cmd">npx skills add AdelBattah/saas-revenue-shield-lite</span>
+        <button class="copy-btn" id="copy-cmd-btn">Copy</button>
+      </div>
+
+      <p><strong>Option B (Direct .ZIP Download or GitHub Repo):</strong></p>
+      <ul class="included">
+        <li><code>aws-bill-shock-check-lite</code> — NAT Gateway, Lambda loop, S3 public &amp; Budget checks</li>
+        <li><code>stripe-webhook-audit-lite</code> — Raw-body HMAC, idempotency &amp; timeout checks</li>
+        <li><code>contract-redline-lite</code> — IP carve-out, payment-linked transfer &amp; liability checks</li>
+        <li><code>invoice-escalation-lite</code> — Overdue tier triage + firm follow-up email draft</li>
+      </ul>
+
+      <div class="btn-row">
+        <a class="btn-primary" href="saas-shield-lite-v1.zip" download>Download Free Lite Pack (.ZIP)</a>
+        <a class="btn-secondary" href="https://github.com/AdelBattah/saas-revenue-shield-lite" target="_blank" rel="noopener">View MIT Repo on GitHub</a>
+        <a class="btn-secondary" href="10-Point_SaaS_Revenue_and_Cloud_Shield_Checklist.md" download>Download 10-Point Checklist (.md)</a>
+      </div>
+    </div>
+
+    <div class="pro-card">
+      <div style="font-size:0.76rem;font-weight:800;text-transform:uppercase;color:var(--accent);margin-bottom:6px;">Step 2 (Optional) — Want Drop-In Fixes &amp; Emergency Playbooks?</div>
+      <h3>Upgrade to the Full 4-Skill Pro Bundle ($39 One-Time — Save $40.96)</h3>
+      <p>
+        The free Lite skills catch the top risks. The <strong>Pro Bundle</strong> adds complete drop-in Terraform IAM region/GPU locks, a guided 15-minute AWS breach containment runbook + Support credit appeal letter, hardened Next.js/Express/FastAPI Stripe templates + SQL schemas, legal counter-clauses, and the 4-tier invoice recovery + IP revocation kit. Backed by a <strong>14-day refund guarantee</strong>.
+      </p>
+      <a class="btn-primary" href="index.html#pricing">See the Full Pro Bundle ($29 / $39) →</a>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById("copy-cmd-btn").addEventListener("click", () => {
+      const text = document.getElementById("cli-cmd").textContent;
+      navigator.clipboard.writeText(text).then(() => {
+        const btn = document.getElementById("copy-cmd-btn");
+        btn.textContent = "Copied!";
+        setTimeout(() => { btn.textContent = "Copy"; }, 1800);
+      }).catch(() => {});
+    });
+  </script>
+</body>
+</html>
